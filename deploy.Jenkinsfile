@@ -1,48 +1,49 @@
 pipeline {
-    agent { label 'app' }
-
-    parameters {
-        string(name: 'REMOTE_USER', defaultValue: 'ubuntu', description: 'Remote user for SSH')
-        string(name: 'REMOTE_HOST', defaultValue: '35.157.11.66', description: 'Remote host for SSH')
-        string(name: 'DST_FOLDER', defaultValue: '/home/ubuntu/app', description: 'Destination folder on remote server')
+    agent {
+        label 'app-server'  // Використовуємо агента з лейблом app-server
     }
 
+    environment {
+        // Змінні для SSH-підключення
+        EC2_USER = 'ubuntu'  // Користувач на EC2
+        EC2_IP = '10.0.1.107'  // IP-адреса EC2-інстансу
+        JAR_FILE = 'spring-boot-complete-0.0.1-SNAPSHOT.jar'  // Назва JAR-файлу
+    }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'git@github.com:Fomka27/gs-spring-boot.git'
+                git 'https://github.com/Fomka27/gs-spring-boot.git'  // Клонуємо репозиторій
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build') {
             steps {
-                sh 'mvn clean deploy'
+                sh 'mvn clean install -f complete/pom.xml'  // Збираємо проєкт з використанням complete/pom.xml
             }
         }
 
-        stage('Prepare Remote Directory') {
+        stage('Deploy') {
             steps {
-                sshagent(credentials: ['ifomenko']) {
-                    sh "ssh -o StrictHostKeyChecking=no ${params.REMOTE_USER}@${params.REMOTE_HOST} \"mkdir -p ${params.DST_FOLDER}\""
+                sshagent(['ifomenko']) {
+                    sh '''
+                        // Копіюємо JAR-файл на сервер
+                        scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/
+                        
+                        // Запускаємо JAR-файл на сервері
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && java -jar *.jar"
+                    '''
                 }
             }
         }
+    }
 
-        stage('Transfer Files') {
-            steps {
-                sshagent(credentials: ['ifomenko']) {
-                    sh "scp -o StrictHostKeyChecking=no target/demo-0.0.1-SNAPSHOT.jar ${params.REMOTE_USER}@${params.REMOTE_HOST}:${params.DST_FOLDER}"
-                }
-            }
+    post {
+        success {
+            echo 'Build and deployment successful!'  // Повідомлення про успішне завершення
         }
-
-        stage('Run on Remote Server') {
-            steps {
-                sshagent(credentials: ['ifomenko']) {
-                    sh "ssh -o StrictHostKeyChecking=no ${params.REMOTE_USER}@${params.REMOTE_HOST} \"cd ${params.DST_FOLDER} && nohup java -jar demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &\""
-                }
-            }
+        failure {
+            echo 'Build or deployment failed!'  // Повідомлення про помилку
         }
     }
 }
