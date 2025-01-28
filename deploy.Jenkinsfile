@@ -28,9 +28,10 @@ pipeline {
             steps {
                 sshagent(['app-server']) {
                     sh '''
+                        chmod +x script.sh.copy
                         // Копіюємо JAR-файл на сервер
                         scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/
-                        chmod +x script.sh.copy
+                        
 
                         // Запускаємо JAR-файл на сервері
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && java -jar *.jar"
