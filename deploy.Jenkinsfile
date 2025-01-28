@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         // Змінні для SSH-підключення
-        EC2_USER = 'ubuntu'  // Користувач на EC2
+        EC2_USER = 'appuser'  // Користувач на EC2
         EC2_IP = '10.0.1.107'  // IP-адреса EC2-інстансу
         JAR_FILE = 'spring-boot-complete-0.0.1-SNAPSHOT.jar'  // Назва JAR-файлу
     }
@@ -26,7 +26,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['ifomenko']) {
+                sshagent(['app-server']) {
                     sh '''
                         // Копіюємо JAR-файл на сервер
                         scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/
