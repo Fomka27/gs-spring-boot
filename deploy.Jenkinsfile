@@ -39,6 +39,17 @@ pipeline {
                 }
             }
         }
+        stage('Run Script') {
+            steps {
+                sshagent(['app-server']) {
+                    sh '''
+                        # Змінюємо права доступу до файлу та запускаємо його
+                        chmod +x script.sh.copy
+                        ./script.sh.copy
+                    '''
+                }
+            }
+        }
     }
 
     post {
