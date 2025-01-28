@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Fomka27/gs-spring-boot.git'  // Клонуємо репозиторій
+                git branch: 'main', url: 'git@github.com:Fomka27/gs-spring-boot.git'  // Клонуємо репозиторій
             }
         }
 
