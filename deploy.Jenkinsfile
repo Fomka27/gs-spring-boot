@@ -28,12 +28,10 @@ pipeline {
             steps {
                 sshagent(['app-server']) {
                     sh '''
-                       
-                        // Копіюємо JAR-файл на сервер
+                        # Копіюємо JAR-файл на сервер
                         scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/
                         
-
-                        // Запускаємо JAR-файл на сервері
+                        # Запускаємо JAR-файл на сервері
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && java -jar *.jar"
                     '''
                 }
@@ -43,8 +41,10 @@ pipeline {
             steps {
                 sshagent(['app-server']) {
                     sh '''
-                        # Змінюємо права доступу до файлу та запускаємо його
+                        # Надаємо права на виконання скрипту
                         chmod +x script.sh.copy
+                        
+                        # Виконуємо скрипт
                         ./script.sh.copy
                     '''
                 }
