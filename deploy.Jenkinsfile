@@ -6,7 +6,7 @@ pipeline {
     environment {
         // Змінні для SSH-підключення
         EC2_USER = 'appuser'  // Користувач на EC2
-        EC2_IP = '10.0.1.107'  // IP-адреса EC2-інстансу
+        EC2_IP = '10.0.1.57'  // IP-адреса EC2-інстансу
         JAR_FILE = 'spring-boot-complete-0.0.1-SNAPSHOT.jar'  // Назва JAR-файлу
     }
 
