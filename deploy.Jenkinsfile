@@ -54,10 +54,18 @@ pipeline {
 
     post {
         success {
-            echo 'Build and deployment successful!'  // Повідомлення про успішне завершення
+            echo 'Build and deployment successful!'
+            telegramSend(
+                message: "✅ Build and Deployment Successful for ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                chatId: "your-chat-id" // Вкажіть ваш Chat ID
+            )
         }
         failure {
-            echo 'Build or deployment failed!'  // Повідомлення про помилку
+            echo 'Build or deployment failed!'
+            telegramSend(
+                message: "❌ Build or Deployment Failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                chatId: "your-chat-id"
+            )
         }
     }
 }
