@@ -32,7 +32,7 @@ pipeline {
                         scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/app
                         
                         # Запускаємо JAR-файл на сервері
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && nohup java -jar *.jar"
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && nohup java -jar *.jar > app.log 2>&1 &"
                     '''
                 }
             }
@@ -57,14 +57,14 @@ pipeline {
             echo 'Build and deployment successful!'
             telegramSend(
                 message: "✅ Build and Deployment Successful for ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                chatId: 8037709607 // Вкажіть ваш Chat ID
+                chatId: -4724473433 // Вкажіть ваш Chat ID
             )
         }
         failure {
             echo 'Build or deployment failed!'
             telegramSend(
                 message: "❌ Build or Deployment Failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                chatId: 8037709607
+                chatId: -4724473433
             )
         }
     }
