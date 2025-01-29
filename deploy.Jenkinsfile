@@ -57,14 +57,14 @@ pipeline {
             echo 'Build and deployment successful!'
             telegramSend(
                 message: "✅ Build and Deployment Successful for ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                chatId: "your-chat-id" // Вкажіть ваш Chat ID
+                chatId: "-4724473433" // Вкажіть ваш Chat ID
             )
         }
         failure {
             echo 'Build or deployment failed!'
             telegramSend(
                 message: "❌ Build or Deployment Failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                chatId: "your-chat-id"
+                chatId: "-4724473433"
             )
         }
     }
