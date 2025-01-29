@@ -32,7 +32,7 @@ pipeline {
                         scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/app
                         
                         # Запускаємо JAR-файл на сервері
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && nohup java -jar *.jar > app.log 2>&1 & exit"
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} "cd /home/${EC2_USER}/app && nohup java -jar *.jar > app.log 2>&1 &" || true
                     '''
                 }
             }
