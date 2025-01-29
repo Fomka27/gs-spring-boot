@@ -26,7 +26,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['app-server']) {
+                sshagent(['ifomenko']) {
                     sh '''
                         # Копіюємо JAR-файл на сервер
                         scp -o StrictHostKeyChecking=no complete/target/${JAR_FILE} ${EC2_USER}@${EC2_IP}:/home/${EC2_USER}/
@@ -39,7 +39,7 @@ pipeline {
         }
         stage('Run Script') {
             steps {
-                sshagent(['app-server']) {
+                sshagent(['ifomenko']) {
                     sh '''
                         # Надаємо права на виконання скрипту
                         chmod +x script.sh.copy
